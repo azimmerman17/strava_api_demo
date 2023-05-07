@@ -21,8 +21,8 @@ def create_app(config_class=Strava_auth):
   def test_page():
     return '<h1>Testing the Flask Application Factory Pattern</h1>'
 
-  @app.route('/<path:path>')
-  def catch_all(path):
-    return 'Page not found'
+  # @app.route('/<path:path>')
+  # def catch_all(path):
+  #   return 'Page not found'
       
   return app
