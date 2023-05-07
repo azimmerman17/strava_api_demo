@@ -1,15 +1,14 @@
 from flask import Flask
 
-from config import Config
+from config import Strava_auth
 
-def create_app():
+def create_app(config_class=Strava_auth):
   app = Flask(__name__)
-  # app.config.from_object(config_class)
+  app.config.from_object(config_class)
 
   # Initialize Flask extensions here
 
-
-
+  # print(config_class.STRAVA_CLIENT_ID)
 
   # migrate models
   # This Demo witl have no models
