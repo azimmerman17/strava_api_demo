@@ -1,0 +1,10 @@
+# this is a sample config file - be sure to gitignore instance
+
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+    
+class Strava_auth:
+  STRAVA_CLIENT_ID = 'YOUR_CLIENT_ID'
+  STRAVA_CLIENT_SECERT = 'YOUR_CLIENT_SECERT'
+  STRAVA_REFRESH_TOKEN = 'YOUR_REFRESH_TOKEN'
