@@ -1,6 +1,6 @@
 import requests
 import urllib3
-from flask import Flask, redirect
+from flask import Flask, redirect, request
 
 
 from app.auth import bp
@@ -68,4 +68,19 @@ def strava(config_class=Strava_auth):
 
 @bp.route('/stravareturn')
 def strava_return(config_class=Strava_auth):
-  return 'Strava Redirect Back'
+  # route = Flask(__name__)
+  # route.config.from_object(config_class)
+
+  args = request.args
+
+  client_id = config_class.STRAVA_CLIENT_ID
+  client_secret = config_class.STRAVA_CLIENT_SECERT
+  grant_type = 'authorization_code'
+  
+  url = f'https://www.strava.com/oauth/token?client_id={client_id}&client_secret={client_secret}&code={args["code"]}&grant_type={grant_type}'
+
+  response = requests.request("POST", url)
+
+  print(response.text)
+
+  return response.json()
