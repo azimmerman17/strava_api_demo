@@ -15,9 +15,9 @@ def index():
 def strava(config_class=Strava_auth):
   args = request.args
 
-  # checks for query string needed on the redirect back
+  # checks for query string for refresh token needed on the redirect back
   if args:
-    refresh_token = args['params']
+    refresh_token = args['param']
 
 
   urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -33,7 +33,7 @@ def strava(config_class=Strava_auth):
     payload = {
       'client_id': config_class.STRAVA_CLIENT_ID,
       'client_secret': config_class.STRAVA_CLIENT_SECERT,
-      'refresh_token': config_class.STRAVA_REFRESH_TOKEN or refresh_token,
+      'refresh_token': refresh_token or config_class.STRAVA_REFRESH_TOKEN,
       'grant_type': 'refresh_token',
       'f': 'json'
     }
@@ -59,12 +59,14 @@ def strava(config_class=Strava_auth):
     }
 
   except:
-    # for new users or users that do not have a refresh token
+    # for new users or users that do not have a  valid refresh token
     strava_authorize_url = 'https://www.strava.com/oauth/authorize'
     client_id = config_class.STRAVA_CLIENT_ID
     redirect_uri = 'http://localhost:8080/auth/stravareturn'
     response_type = 'code'
-    scope = 'activity:read_all'
+    # refer to the official documentation for what each scope represent
+    # https://developers.strava.com/docs/authentication/#details-about-requesting-access
+    scope = 'read_all,profile:read_all,profile:write,activity:read_all'
     
     return redirect(f'{strava_authorize_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type={response_type}&scope={scope}') 
 
@@ -82,5 +84,8 @@ def strava_return(config_class=Strava_auth):
   url = f'https://www.strava.com/oauth/token?client_id={client_id}&client_secret={client_secret}&code={args["code"]}&grant_type={grant_type}'
 
   response = requests.request("POST", url).json()
+
+  # be sure to save this information so you don't have to authrorize every time
+  print(response['refresh_token'])
 
   return redirect(url_for('auth.strava', param=response['refresh_token']))
